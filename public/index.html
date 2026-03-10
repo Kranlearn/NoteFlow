@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteFlow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+  --bg: #c3c3c3;
+  --surface: #a29494;
+  --border: #2a2a2a;
+  --border-dark: #b39797;
+  --text: #020202;
+  --muted: #fff9f9;
+  --accent: #f0f0f0;
+  --danger: #e05555;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+}
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+  font-family: 'Geist Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(250, 250, 248, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-family: "Instrument Serif", serif;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .header-meta {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 48px 24px 100px;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 24px;
+      }
+
+      /* Sidebar */
+      .sidebar {
+      }
+
+      .new-note-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--text);
+        color: #fff;
+        border: none;
+        font-family: "Geist Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-bottom: 16px;
+        transition: background 0.15s;
+      }
+
+      .new-note-btn:hover {
+        background: #333;
+      }
+
+      .notes-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .note-item {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        transition: all 0.15s;
+        animation: fadeIn 0.3s ease both;
+      }
+
+      .note-item:hover {
+        border-color: var(--border-dark);
+      }
+      .note-item.active {
+        border-color: var(--text);
+        background: var(--text);
+        color: #fff;
+      }
+
+      .note-item-title {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .note-item-date {
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+      }
+
+      .note-item.active .note-item-date {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .empty-list {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+        padding: 32px 0;
+        letter-spacing: 0.06em;
+      }
+
+      /* Editor */
+      .editor {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        min-height: 500px;
+      }
+
+      .editor-toolbar {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .editor-label {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .editor-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-save {
+        border: 1px solid var(--text);
+        background: var(--text);
+        color: #fff;
+        font-family: "Geist Mono", monospace;
+        font-size: 10px;
+        padding: 5px 14px;
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        transition: all 0.15s;
+      }
+
+      .btn-save:hover {
+        background: #333;
+      }
+
+      .btn-delete-note {
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-family: "Geist Mono", monospace;
+        font-size: 10px;
+        padding: 5px 14px;
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        transition: all 0.15s;
+      }
+
+      .btn-delete-note:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      .editor-title {
+        border: none;
+        outline: none;
+        padding: 20px 20px 8px;
+        font-family: "Instrument Serif", serif;
+        font-size: 24px;
+        color: var(--text);
+        background: transparent;
+        width: 100%;
+      }
+
+      .editor-title::placeholder {
+        color: var(--muted);
+      }
+
+      .editor-content {
+        border: none;
+        outline: none;
+        padding: 8px 20px 20px;
+        font-family: "Geist Mono", monospace;
+        font-size: 13px;
+        color: var(--text);
+        background: transparent;
+        width: 100%;
+        flex: 1;
+        resize: none;
+        line-height: 1.8;
+        min-height: 400px;
+      }
+
+      .editor-content::placeholder {
+        color: var(--muted);
+      }
+
+      .editor-empty {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--text);
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.2s;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">NoteFlow</div>
+      <div class="header-meta" id="noteCount">0 note</div>
+    </header>
+
+    <main>
+      <div class="sidebar">
+        <button class="new-note-btn" onclick="newNote()">
+          + Nouvelle note
+        </button>
+        <div class="notes-list" id="notesList"></div>
+      </div>
+
+      <div class="editor" id="editor">
+        <div class="editor-empty" id="editorEmpty">
+          ← Sélectionne une note ou crée-en une
+        </div>
+        <div
+          id="editorForm"
+          style="display: none; flex-direction: column; flex: 1"
+        >
+          <div class="editor-toolbar">
+            <span class="editor-label">Édition</span>
+            <div class="editor-actions">
+              <button class="btn-save" onclick="saveNote()">Sauvegarder</button>
+              <button class="btn-delete-note" onclick="deleteNote()">
+                Supprimer
+              </button>
+            </div>
+          </div>
+          <input
+            type="text"
+            class="editor-title"
+            id="editorTitle"
+            placeholder="Titre de la note..."
+          />
+          <textarea
+            class="editor-content"
+            id="editorContent"
+            placeholder="Écris ici..."
+          ></textarea>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const API = "/api/notes";
+      let notes = [];
+      let currentId = null;
+
+      async function fetchNotes() {
+        const res = await fetch(API);
+        notes = await res.json();
+        renderList();
+      }
+
+      function renderList() {
+        const list = document.getElementById("notesList");
+        document.getElementById("noteCount").textContent =
+          `${notes.length} note${notes.length > 1 ? "s" : ""}`;
+
+        if (notes.length === 0) {
+          list.innerHTML = '<div class="empty-list">Aucune note</div>';
+          return;
+        }
+
+        list.innerHTML = notes
+          .map(
+            (n) => `
+      <div class="note-item ${n.id === currentId ? "active" : ""}" onclick="openNote(${n.id})">
+        <div class="note-item-title">${escapeHtml(n.titre)}</div>
+        <div class="note-item-date">${formatDate(n.updated_at)}</div>
+      </div>
+    `,
+          )
+          .join("");
+      }
+
+      function openNote(id) {
+        currentId = id;
+        const note = notes.find((n) => n.id === id);
+        document.getElementById("editorEmpty").style.display = "none";
+        document.getElementById("editorForm").style.display = "flex";
+        document.getElementById("editorTitle").value = note.titre;
+        document.getElementById("editorContent").value = note.contenu || "";
+        renderList();
+      }
+
+      async function newNote() {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ titre: "Nouvelle note", contenu: "" }),
+        });
+        const note = await res.json();
+        await fetchNotes();
+        openNote(note.id);
+      }
+
+      async function saveNote() {
+        if (!currentId) return;
+        const titre =
+          document.getElementById("editorTitle").value.trim() || "Sans titre";
+        const contenu = document.getElementById("editorContent").value;
+        await fetch(`${API}/${currentId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ titre, contenu }),
+        });
+        await fetchNotes();
+        showToast("Note sauvegardée ✓");
+      }
+
+      async function deleteNote() {
+        if (!currentId) return;
+        await fetch(`${API}/${currentId}`, { method: "DELETE" });
+        currentId = null;
+        document.getElementById("editorEmpty").style.display = "flex";
+        document.getElementById("editorForm").style.display = "none";
+        await fetchNotes();
+        showToast("Note supprimée");
+      }
+
+      // Auto-save avec Ctrl+S
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+          e.preventDefault();
+          saveNote();
+        }
+      });
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2000);
+      }
+
+      function formatDate(str) {
+        const d = new Date(str);
+        return d.toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      fetchNotes();
+    </script>
+  </body>
+</html>
