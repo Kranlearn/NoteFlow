@@ -89,37 +89,24 @@ git config --global user.email "ton@email.com"
 ```
 
 ### 3. Crée un repo sur GitHub
-- Va sur [github.com](https://github.com)
-- Clique sur **"New repository"**
+  [github.com](https://github.com)
+-  **"New repository"**
 - Nom : `noteflow`
-- Laisse tout par défaut et clique **"Create repository"**
+-  **"Create repository"**
 
-### 4. Initialise Git dans ton projet
+### 4. Initialise Git dans le projet
 ```bash
 git init
 git add .
 git commit -m "Initial commit — NoteFlow"
 ```
 
-### 5. Pousse le projet sur GitHub
+### 5. Pousser le projet sur GitHub
 ```bash
 git remote add origin https://github.com/TON_USERNAME/noteflow.git
 git branch -M main
 git push -u origin main
 ```
-
-Remplace `TON_USERNAME` par ton pseudo GitHub. ✅
-
----
-
-## Déploiement (Railway)
-
-Une fois sur GitHub, le déploiement sur [Railway](https://railway.app) prend 5 minutes :
-
-1. Connecte-toi sur Railway avec ton compte GitHub
-2. Clique sur **"New Project"** → **"Deploy from GitHub repo"**
-3. Sélectionne le repo `noteflow`
-4. Railway détecte Node.js automatiquement et déploie 🚀
 
 ---
 
