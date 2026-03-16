@@ -45,10 +45,6 @@ npm install
 node server.js
 ```
 
-ouverture du server dans le navigateur: **http://localhost:3000** . 🚀
-
----
-
 ## Structure du projet
 
 ```
@@ -74,38 +70,7 @@ noteflow/
 | PUT | `/api/notes/:id` | Modifier une note |
 | DELETE | `/api/notes/:id` | Supprimer une note |
 
----
 
-## Mettre le projet sur GitHub
-
-### 1. Installe Git
-Télécharge et installe Git → https://git-scm.com/download/win  
-Laisse toutes les options par défaut.
-
-### 2. Configure Git (une seule fois)
-```bash
-git config --global user.name "Ton Prénom"
-git config --global user.email "ton@email.com"
-```
-
-### 3. Crée un repo sur GitHub
-  [github.com](https://github.com)
--  **"New repository"**
-- Nom : `noteflow`
--  **"Create repository"**
-
-### 4. Initialise Git dans le projet
-```bash
-git init
-git add .
-git commit -m "Initial commit — NoteFlow"
-```
-
-### 5. Pousser le projet sur GitHub
-```bash
-git remote add origin https://github.com/TON_USERNAME/noteflow.git
-git branch -M main
-git push -u origin main
 ```
 
 ---
